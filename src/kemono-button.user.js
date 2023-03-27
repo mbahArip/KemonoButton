@@ -5,8 +5,8 @@
 // @author          mbaharip
 // @description     Adds button to access artist's Kemono page
 // @icon            https://kemono.party/static/favicon.ico
-// @downloadURL     https://raw.githubusercontent.com/mbaharip/KemonoButton/master/src/kemono-button.user.js
-// @updateURL       https://raw.githubusercontent.com/mbaharip/KemonoButton/master/src/kemono-button.meta.js
+// @downloadURL     https://raw.githubusercontent.com/mbaharip/KemonoButton/main/src/kemono-button.user.js
+// @updateURL       https://raw.githubusercontent.com/mbahArip/KemonoButton/main/src/kemono-button.meta.js
 // @supportURL      https://github.com/mbahArip/KemonoButton/issues
 // @match           https://fantia.jp/*
 // @match           https://*.fanbox.cc/
