@@ -27,6 +27,7 @@ function main () {
     'use strict';
 
     const domain = window.location.hostname;
+    const pathname = window.location.toString();
     var attempt = 0;
     var loaded = true;
     console.log( 'Kemono Button: Running on ' + domain );
@@ -69,9 +70,10 @@ function main () {
     checkDataLoaded();
 
     try {
-        // Make sure it only runs on fantia.jp/fanclubs/*
-        if ( domain.includes( 'fantia' ) && domain.includes( 'fanclubs' ) ) {
-            loaded = false
+        // Make sure it only runs on fc page (about, plans, posts, products, etc)
+        if ( domain.includes( 'fantia' ) && ( pathname.includes( 'fanclubs' ) || pathname.includes( 'posts' ) || pathname.includes( 'products' ) ) && /\d/.test( pathname ) ) {
+            loaded = false;
+            checkDataLoaded();
             console.log( 'Kemono Button: Fantia detected' );
             awaitForElement( '.fanclub-show-header', () => {
                 const fcName = document.querySelector( '.fanclub-name' ).children[ 0 ].getAttribute( 'href' );
@@ -125,7 +127,8 @@ function main () {
             // element query select .fanclub-btns
         }
         if ( domain.includes( 'fanbox' ) ) {
-            loaded = false
+            loaded = false;
+            checkDataLoaded();
             console.log( 'Kemono Button: Fanbox detected' );
             /**
              * Check avatar class
@@ -186,11 +189,34 @@ function main () {
 
         // Coomer button
         if ( domain.includes( 'onlyfans' ) ) {
-            loaded = false
+            loaded = false;
+            checkDataLoaded();
             console.log( 'Kemono Button: OnlyFans detected' );
 
             // Check if using dark mode / light mode
-            const isDarkMode = document.documentElement.classList.contains( 'm-mode-dark' );
+            let isDarkMode = document.documentElement.classList.contains( 'm-mode-dark' );
+            let pageExist = false;
+
+            // Observe change
+            const observer = new MutationObserver( ( mutations ) => {
+                mutations.forEach( ( mutation ) => {
+                    if ( mutation.attributeName === 'class' ) {
+                        if ( document.documentElement.className === 'm-mode-dark' || document.documentElement.className === '' ) {
+                            isDarkMode = document.documentElement.classList.contains( 'm-mode-dark' );
+                            const kemonoButton = document.querySelector( '#KemonoButton > button > img' );
+                            if ( !kemonoButton ) return;
+                            if ( pageExist ) {
+                                kemonoButton.style = 'width: 2.5rem; height: 2.5rem; filter: hue-rotate(190deg) brightness(1.4)';
+                            } else {
+                                kemonoButton.style = `width: 2.5rem; height: 2.5rem; ${ isDarkMode ? '' : 'filter: invert(1)' }`;
+                            }
+                        }
+                    }
+                } );
+            } );
+
+            observer.observe( document.documentElement, { attributes: true } );
+
 
             awaitForElement( '.g-user-username', ( username ) => {
                 const user = username.innerText.split( '@' )[ 1 ];
@@ -207,6 +233,7 @@ function main () {
                 anchor.href = coomerURL;
                 anchor.target = '_blank';
                 anchor.rel = 'noopener noreferrer nofollow';
+                anchor.id = 'KemonoButton';
 
                 // Coomer img
                 const img = document.createElement( 'img' );
@@ -215,7 +242,9 @@ function main () {
 
                 checkKemonoPage( coomerURL, ( exists ) => {
                     if ( exists ) {
+                        pageExist = true;
                     } else {
+                        pageExist = false;
                         button.disabled = true;
                         anchor.style = 'cursor: not-allowed;';
                         anchor.onclick = ( e ) => {
@@ -295,8 +324,10 @@ function main () {
 
     function checkDataLoaded () {
         if ( loaded ) {
+            console.log( 'Data is loaded, hiding toast...' );
             toast.style = toastElement( false );
         } else {
+            console.log( 'Data isn\'t loaded, showing toast...' );
             toast.style = toastElement( true );
         }
     }
