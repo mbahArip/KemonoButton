@@ -28,7 +28,7 @@ function main () {
 
     const domain = window.location.hostname;
     var attempt = 0;
-    var loaded = false;
+    var loaded = true;
     console.log( 'Kemono Button: Running on ' + domain );
 
     const toastElement = ( active ) => {
@@ -69,8 +69,9 @@ function main () {
     checkDataLoaded();
 
     try {
-        // Kemono button
-        if ( domain.includes( 'fantia' ) ) {
+        // Make sure it only runs on fantia.jp/fanclubs/*
+        if ( domain.includes( 'fantia' ) && domain.includes( 'fanclubs' ) ) {
+            loaded = false
             console.log( 'Kemono Button: Fantia detected' );
             awaitForElement( '.fanclub-show-header', () => {
                 const fcName = document.querySelector( '.fanclub-name' ).children[ 0 ].getAttribute( 'href' );
@@ -124,7 +125,15 @@ function main () {
             // element query select .fanclub-btns
         }
         if ( domain.includes( 'fanbox' ) ) {
+            loaded = false
             console.log( 'Kemono Button: Fanbox detected' );
+            /**
+             * Check avatar class
+             * 26 March - .sc-14k46gk-3.dMigcK.sc-dzfsti-1.dFkQHW.sc-1upaq18-10.iqxGkh
+             * 28 March - .LazyImage__BgImage-sc-14k46gk-3.pVmiQ.UserIcon__Icon-sc-dzfsti-1.fGNywG.styled__StyledUserIcon-sc-1upaq18-10.heHjIG
+             * 
+             * Check again tmrw. If it changing again, search another way to get ID, and button container.
+             */
             awaitForElement( '.sc-14k46gk-3.dMigcK.sc-dzfsti-1.dFkQHW.sc-1upaq18-10.iqxGkh', ( avatar ) => {
                 const avatarURL = window.getComputedStyle( avatar ).getPropertyValue( 'background-image' );
                 const userId = avatarURL.split( 'user/' )[ 1 ].split( '/' )[ 0 ];
@@ -177,7 +186,12 @@ function main () {
 
         // Coomer button
         if ( domain.includes( 'onlyfans' ) ) {
+            loaded = false
             console.log( 'Kemono Button: OnlyFans detected' );
+
+            // Check if using dark mode / light mode
+            const isDarkMode = document.documentElement.classList.contains( 'm-mode-dark' );
+
             awaitForElement( '.g-user-username', ( username ) => {
                 const user = username.innerText.split( '@' )[ 1 ];
                 const coomerURL = `https://coomer.party/onlyfans/user/${ user }`;
@@ -208,7 +222,7 @@ function main () {
                             e.preventDefault();
                         };
                         img.src = 'https://kemono.party/static/klogo.png';
-                        img.style = 'width: 2.5rem; height: 2.5rem;';
+                        img.style = `width: 2.5rem; height: 2.5rem; ${ isDarkMode ? '' : 'filter: invert(1)' }`;
                     }
                     toastText( 'Adding button...' );
                     button.appendChild( img );
