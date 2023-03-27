@@ -8,7 +8,7 @@ The sole reason i create this because it's kinda annoying to copy the id or name
 It's also gonna check wether it's exists on kemono or not.
 
 ## Install
-Use tampermonkey and install [the script](https://raw.githubusercontent.com/mbaharip/KemonoButton/master/src/kemono-button.user.js).
+Use tampermonkey and install [the script](https://raw.githubusercontent.com/mbaharip/KemonoButton/main/src/kemono-button.user.js).
 
 ## Preview
 ### Fanbox
