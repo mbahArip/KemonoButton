@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Kemono Button
 // @namespace       https://github.com/mbaharip
-// @version         1.0.4
+// @version         1.0.5
 // @author          mbaharip
 // @description     Adds button to access artist's Kemono page
 // @icon            https://kemono.party/static/favicon.ico
@@ -120,10 +120,10 @@ function main () {
                         };
                         text.innerText = 'Not found';
                     }
-                    anchor.appendChild( img );
-                    anchor.appendChild( text );
-                    button.appendChild( anchor );
-                    buttonContainer.appendChild( button );
+                    button.appendChild( img );
+                    button.appendChild( text );
+                    anchor.appendChild( button );
+                    buttonContainer.appendChild( anchor );
                 } );
             } );
             // element query select .fanclub-btns
@@ -136,27 +136,30 @@ function main () {
              * Check avatar class
              * 26 March - .sc-14k46gk-3.dMigcK.sc-dzfsti-1.dFkQHW.sc-1upaq18-10.iqxGkh
              * 28 March - .LazyImage__BgImage-sc-14k46gk-3.pVmiQ.UserIcon__Icon-sc-dzfsti-1.fGNywG.styled__StyledUserIcon-sc-1upaq18-10.heHjIG
-             * 29 March - .LazyImage__BgImage-sc-14k46gk-3.pVmiQ.UserIcon__Icon-sc-dzfsti-1.fGNywG styled__StyledUserIcon-sc-1upaq18-10 heHjIG
+             * 29 March - .LazyImage__BgImage-sc-14k46gk-3.pVmiQ.UserIcon__Icon-sc-dzfsti-1.fGNywG styled__StyledUserIcon-sc-1upaq18-10.heHjIG
              * 
              * ~~Check again tmrw. If it changing again, search another way to get ID, and button container.~~
              * Check for one more day to make sure it doesn't change.
+             * For now use the current element for temporary fix.
              */
-            awaitForElement( '.sc-14k46gk-3.dMigcK.sc-dzfsti-1.dFkQHW.sc-1upaq18-10.iqxGkh', ( avatar ) => {
+            awaitForElement( '.LazyImage__BgImage-sc-14k46gk-3.pVmiQ.UserIcon__Icon-sc-dzfsti-1.fGNywG styled__StyledUserIcon-sc-1upaq18-10.heHjIG', ( avatar ) => {
                 const avatarURL = window.getComputedStyle( avatar ).getPropertyValue( 'background-image' );
                 const userId = avatarURL.split( 'user/' )[ 1 ].split( '/' )[ 0 ];
                 const kemonoURL = `https://kemono.party/fanbox/user/${ userId }`;
 
-                const buttonContainer = document.querySelector( 'div.sc-1upaq18-7.dyOA-dD > div.sc-1upaq18-19.geuERQ' );
+                const buttonContainer = document.querySelector( 'div.styled__UserStatusWrapper-sc-1upaq18-19:nth-child(3)' );
 
-                const buttonStyle = 'sc-1pize7g-0 sc-1s35wwu-0 iMpXkC cQaBde CreatorHeader__HeaderFollowButton-sc-mkpnwe-1 dxFMmE cCRauH';
-                const divStyle = 'sc-1s35wwu-2 ieoUtK';
+                const buttonStyle = 'ButtonBase-sc-1pize7g-0 CommonButton__CommonButtonOuter-sc-1s35wwu-0 iorEfw kyhFpO CreatorHeader__HeaderFollowButton-sc-mkpnwe-1 dxFMmE';
+                const divStyle = 'CommonButton__CommonButtonInner-sc-1s35wwu-2 ioTSpN';
 
                 const button = document.createElement( 'button' );
                 button.className = buttonStyle;
                 button.style = 'margin: 0 0 0 0.5rem;';
 
+                const div = document.createElement( 'div' );
+                div.className = divStyle;
+
                 const anchor = document.createElement( 'a' );
-                anchor.className = divStyle;
                 anchor.href = kemonoURL;
                 anchor.target = '_blank';
                 anchor.rel = 'noopener noreferrer nofollow';
@@ -165,7 +168,7 @@ function main () {
                 // Kemono img
                 const img = document.createElement( 'img' );
                 img.src = 'https://kemono.party/static/klogo.png';
-                img.className = 'sc-q84so8-0 fLiaHw';
+                img.className = 'FollowButton__Icon-sc-q84so8-0 beOViB';
                 img.style = 'width: 1rem; height: 1rem;';
 
                 // Text
@@ -182,10 +185,11 @@ function main () {
                         };
                         text.innerText = 'Not found';
                     }
-                    anchor.appendChild( img );
-                    anchor.appendChild( text );
-                    button.appendChild( anchor );
-                    buttonContainer.appendChild( button );
+                    div.appendChild( img );
+                    div.appendChild( text );
+                    button.appendChild( div );
+                    anchor.appendChild( button );
+                    buttonContainer.appendChild( anchor );
                 } );
             } );
         }
