@@ -17,3 +17,8 @@ Use tampermonkey and install [the script](https://raw.githubusercontent.com/mbah
 ![Fantia](media/fantia-exist.png)
 ### Not found example
 ![Not found example](media/fantia-not-found.png)
+
+## TODO
+- [ ] Implement patreon
+- [ ] Own button style
+- [ ] Split the code between services
