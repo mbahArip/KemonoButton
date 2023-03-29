@@ -142,12 +142,17 @@ function main () {
              * Check for one more day to make sure it doesn't change.
              * For now use the current element for temporary fix.
              */
-            awaitForElement( '.LazyImage__BgImage-sc-14k46gk-3.pVmiQ.UserIcon__Icon-sc-dzfsti-1.fGNywG styled__StyledUserIcon-sc-1upaq18-10.heHjIG', ( avatar ) => {
+            const tempSelector = {
+                avatar: '.CreatorHeader__IsNotMobileSmallWrapper-sc-mkpnwe-3 > div:nth-child(1) > a:nth-child(1) > div:nth-child(1)',
+                container: 'div.styled__UserStatusWrapper-sc-1upaq18-19:nth-child(3)'
+            };
+
+            awaitForElement( tempSelector.avatar, ( avatar ) => {
                 const avatarURL = window.getComputedStyle( avatar ).getPropertyValue( 'background-image' );
                 const userId = avatarURL.split( 'user/' )[ 1 ].split( '/' )[ 0 ];
                 const kemonoURL = `https://kemono.party/fanbox/user/${ userId }`;
 
-                const buttonContainer = document.querySelector( 'div.styled__UserStatusWrapper-sc-1upaq18-19:nth-child(3)' );
+                const buttonContainer = document.querySelector( tempSelector.container );
 
                 const buttonStyle = 'ButtonBase-sc-1pize7g-0 CommonButton__CommonButtonOuter-sc-1s35wwu-0 iorEfw kyhFpO CreatorHeader__HeaderFollowButton-sc-mkpnwe-1 dxFMmE';
                 const divStyle = 'CommonButton__CommonButtonInner-sc-1s35wwu-2 ioTSpN';
