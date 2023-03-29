@@ -135,6 +135,7 @@ async function main () {
 
                 // Kemono img
                 const img = document.createElement( 'img' );
+                img.className = 'mr-5'
                 img.src = 'https://kemono.party/static/klogo.png';
                 img.style = 'width: 1.5rem; height: 1.5rem; filter: invert(100%)';
 
