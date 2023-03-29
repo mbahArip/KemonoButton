@@ -136,8 +136,10 @@ function main () {
              * Check avatar class
              * 26 March - .sc-14k46gk-3.dMigcK.sc-dzfsti-1.dFkQHW.sc-1upaq18-10.iqxGkh
              * 28 March - .LazyImage__BgImage-sc-14k46gk-3.pVmiQ.UserIcon__Icon-sc-dzfsti-1.fGNywG.styled__StyledUserIcon-sc-1upaq18-10.heHjIG
+             * 29 March - .LazyImage__BgImage-sc-14k46gk-3.pVmiQ.UserIcon__Icon-sc-dzfsti-1.fGNywG styled__StyledUserIcon-sc-1upaq18-10 heHjIG
              * 
-             * Check again tmrw. If it changing again, search another way to get ID, and button container.
+             * ~~Check again tmrw. If it changing again, search another way to get ID, and button container.~~
+             * Check for one more day to make sure it doesn't change.
              */
             awaitForElement( '.sc-14k46gk-3.dMigcK.sc-dzfsti-1.dFkQHW.sc-1upaq18-10.iqxGkh', ( avatar ) => {
                 const avatarURL = window.getComputedStyle( avatar ).getPropertyValue( 'background-image' );
