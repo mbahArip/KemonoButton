@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Kemono Button
 // @namespace       https://github.com/mbaharip
-// @version         1.0.5
+// @version         1.0.6
 // @author          mbaharip
 // @description     Adds button to access artist's Kemono page
 // @icon            https://kemono.party/static/favicon.ico
@@ -23,22 +23,50 @@
 // @license         GPL-3.0-or-later; https://www.gnu.org/licenses/gpl-3.0-standalone.html
 // ==/UserScript==
 
+var debugMode = false;
 var loadUrl = window.location.href;
 
-function main () {
+function styledLog ( message, isDebug = debugMode, isError = false ) {
+    const kemonoBadgeStyle = [
+        `background:${ isDebug ? '#ffc107' : '#22c283' }`,
+        `color:${ isDebug ? '#333' : '#fff' }`,
+        'font-weight: bold',
+        'font-size: 14px',
+        'padding: 0 0.5rem',
+        'border-radius: 4px',
+    ];
+    const kemonoBadgeError = [
+        'background: #dc3545',
+        'color: #fff',
+        'font-weight: bold',
+        'font-size: 14px',
+        'padding: 0 0.5rem',
+        'border-radius: 4px',
+    ];
+
+    if ( isError ) {
+        console.log( '%cKemonoButton - Error Occured', kemonoBadgeError, `: ${ message }` );
+    } else {
+        console.log( `%cKemonoButton${ isDebug && ' - Debug Mode' }`, kemonoBadgeStyle, `: ${ message }` );
+    }
+}
+
+async function main () {
     'use strict';
 
+    loadUrl = window.location.href;
     const domain = window.location.hostname;
     const pathname = window.location.toString();
     var attempt = 0;
     var loaded = true;
-    console.log( 'Kemono Button: Running on ' + domain );
+    // console.log( 'Kemono Button: Running on ' + domain );
+    styledLog( `Loaded.` )
 
     const toastElement = ( active ) => {
         const style = [
             'position:fixed',
             'z-index: 10000002',
-            'background: #47ccff',
+            'background: #22c283',
             'color: white',
             'padding: 0.5rem 4rem',
             'display: flex',
@@ -69,22 +97,26 @@ function main () {
     toast.style = toastElement( false );
     document.body.appendChild( toast );
 
-    checkDataLoaded();
-
     try {
+        // Check for Kemono Button first.
+        if ( document.getElementById( 'KemonoButton' ) ) {
+            toastText('Button already exists.');
+            loaded = true;
+            checkDataLoaded();
+            return;
+        }
+
         // Make sure it only runs on fc page (about, plans, posts, products, etc)
         if ( domain.includes( 'fantia' ) && ( pathname.includes( 'fanclubs' ) || pathname.includes( 'posts' ) || pathname.includes( 'products' ) ) && /\d/.test( pathname ) ) {
             loaded = false;
             checkDataLoaded();
-            console.log( 'Kemono Button: Fantia detected' );
-            awaitForElement( '.fanclub-show-header', () => {
+            // console.log( 'Kemono Button: Fantia detected' );
+            styledLog( 'Fantia detected.' );
+
+            await awaitForElement( '.fanclub-show-header', () => {
                 const fcName = document.querySelector( '.fanclub-name' ).children[ 0 ].getAttribute( 'href' );
                 const userId = fcName.split( 'fanclubs/' )[ 1 ].split( '/' )[ 0 ];
                 const kemonoURL = `https://kemono.party/fantia/user/${ userId }`;
-
-                console.log( 'Kemono Button: User ID: ' + userId );
-                console.log( 'Kemono Button: Kemono URL: ' + kemonoURL );
-                console.log( 'Kemono Button: Creating button' );
 
                 const buttonContainer = document.querySelector( '.fanclub-btns' );
 
@@ -95,6 +127,7 @@ function main () {
                 button.style = 'margin: 0.5rem 0 0 0;';
 
                 const anchor = document.createElement( 'a' );
+                anchor.id = 'KemonoButton';
                 anchor.href = kemonoURL;
                 anchor.target = '_blank';
                 anchor.rel = 'noopener noreferrer nofollow';
@@ -131,7 +164,9 @@ function main () {
         if ( domain.includes( 'fanbox' ) ) {
             loaded = false;
             checkDataLoaded();
-            console.log( 'Kemono Button: Fanbox detected' );
+            // console.log( 'Kemono Button: Fanbox detected' );
+            styledLog( 'Fanbox detected.' )
+
             /**
              * Check avatar class
              * 26 March - .sc-14k46gk-3.dMigcK.sc-dzfsti-1.dFkQHW.sc-1upaq18-10.iqxGkh
@@ -147,14 +182,14 @@ function main () {
                 container: 'div.styled__UserStatusWrapper-sc-1upaq18-19:nth-child(3)'
             };
 
-            awaitForElement( tempSelector.avatar, ( avatar ) => {
+            await awaitForElement( tempSelector.avatar, ( avatar ) => {
                 const avatarURL = window.getComputedStyle( avatar ).getPropertyValue( 'background-image' );
                 const userId = avatarURL.split( 'user/' )[ 1 ].split( '/' )[ 0 ];
                 const kemonoURL = `https://kemono.party/fanbox/user/${ userId }`;
 
                 const buttonContainer = document.querySelector( tempSelector.container );
 
-                const buttonStyle = 'ButtonBase-sc-1pize7g-0 CommonButton__CommonButtonOuter-sc-1s35wwu-0 iorEfw kyhFpO CreatorHeader__HeaderFollowButton-sc-mkpnwe-1 dxFMmE';
+                const buttonStyle = 'CommonButton__CommonButtonLikeOuter-sc-1s35wwu-1 jWpLkw';
                 const divStyle = 'CommonButton__CommonButtonInner-sc-1s35wwu-2 ioTSpN';
 
                 const button = document.createElement( 'button' );
@@ -165,6 +200,7 @@ function main () {
                 div.className = divStyle;
 
                 const anchor = document.createElement( 'a' );
+                anchor.id = 'KemonoButton'
                 anchor.href = kemonoURL;
                 anchor.target = '_blank';
                 anchor.rel = 'noopener noreferrer nofollow';
@@ -174,7 +210,7 @@ function main () {
                 const img = document.createElement( 'img' );
                 img.src = 'https://kemono.party/static/klogo.png';
                 img.className = 'FollowButton__Icon-sc-q84so8-0 beOViB';
-                img.style = 'width: 1rem; height: 1rem;';
+                img.style = 'width: 1rem; height: 1rem; margin: 0 0.5rem;';
 
                 // Text
                 const text = document.createElement( 'span' );
@@ -204,7 +240,8 @@ function main () {
         if ( domain.includes( 'onlyfans' ) ) {
             loaded = false;
             checkDataLoaded();
-            console.log( 'Kemono Button: OnlyFans detected' );
+            // console.log( 'Kemono Button: OnlyFans detected' );
+            styledLog( 'Onlyfans detected.' )
 
             // Check if using dark mode / light mode
             let isDarkMode = document.documentElement.classList.contains( 'm-mode-dark' );
@@ -216,12 +253,12 @@ function main () {
                     if ( mutation.attributeName === 'class' ) {
                         if ( document.documentElement.className === 'm-mode-dark' || document.documentElement.className === '' ) {
                             isDarkMode = document.documentElement.classList.contains( 'm-mode-dark' );
-                            const kemonoButton = document.querySelector( '#KemonoButton > button > img' );
-                            if ( !kemonoButton ) return;
+                            const kemonoButtonImg = document.querySelector( '#KemonoButton > button > img' );
+                            if ( !kemonoButtonImg ) return;
                             if ( pageExist ) {
-                                kemonoButton.style = 'width: 2.5rem; height: 2.5rem; filter: hue-rotate(190deg) brightness(1.4)';
+                                kemonoButtonImg.style = 'width: 2.5rem; height: 2.5rem; filter: hue-rotate(190deg) brightness(1.4)';
                             } else {
-                                kemonoButton.style = `width: 2.5rem; height: 2.5rem; ${ isDarkMode ? '' : 'filter: invert(1)' }`;
+                                kemonoButtonImg.style = `width: 2.5rem; height: 2.5rem; ${ isDarkMode ? '' : 'filter: invert(1)' }`;
                             }
                         }
                     }
@@ -230,10 +267,9 @@ function main () {
 
             observer.observe( document.documentElement, { attributes: true } );
 
-
-            awaitForElement( '.g-user-username', ( username ) => {
-                const user = username.innerText.split( '@' )[ 1 ];
-                const coomerURL = `https://coomer.party/onlyfans/user/${ user }`;
+            await awaitForElement( '.b-profile__header__user.g-sides-gaps', () => {
+                const username = document.querySelector( '.g-user-username' ).innerText.split( '@' )[ 1 ];
+                const coomerURL = `https://coomer.party/onlyfans/user/${ username }`;
 
                 const buttonContainer = document.querySelector( 'div.b-group-profile-btns:nth-child(2)' );
 
@@ -243,10 +279,10 @@ function main () {
                 button.className = buttonStyle;
 
                 const anchor = document.createElement( 'a' );
+                anchor.id = 'KemonoButton';
                 anchor.href = coomerURL;
                 anchor.target = '_blank';
                 anchor.rel = 'noopener noreferrer nofollow';
-                anchor.id = 'KemonoButton';
 
                 // Coomer img
                 const img = document.createElement( 'img' );
@@ -278,28 +314,34 @@ function main () {
         }
     } catch ( error ) {
         toastText( 'Error adding button. Please report this to the developer.' );
-        console.error( error );
+        styledLog( error.message, debugMode, true )
         loaded = true;
         checkDataLoaded();
     }
 
 
     function awaitForElement ( selector, callback ) {
+        // console.log( 'Kemono Button: Waiting for element...' );
+        styledLog( 'Waiting for element...' )
         const el = document.querySelector( selector );
-        if ( el ) {
-            attempt = 0;
-            callback( el );
-        } else {
-            if ( attempt > 10 ) {
-                toastText( 'Error: Element not found.' );
-                loaded = true;
-                checkDataLoaded();
-                return;
+        return new Promise( ( resolve, reject ) => {
+            if ( el ) {
+                attempt = 0;
+                resolve(
+                    callback( el )
+                );
+            } else {
+                if ( attempt > 10 ) {
+                    toastText( 'Error: Element not found.' );
+                    loaded = true;
+                    checkDataLoaded();
+                    reject( 'Error: Element not found.' );
+                }
+                attempt++;
+                toastText( `Try attempt #${ attempt } - No element found. Retrying in 1 second...` );
+                setTimeout( () => awaitForElement( selector, callback ), 1000 );
             }
-            setTimeout( () => awaitForElement( selector, callback ), 1000 );
-            attempt++;
-            toastText( `Try attempt #${ attempt } - No element found. Retrying in 1 second...` );
-        }
+        } )
     }
 
     function checkKemonoPage ( targetUrl, callback ) {
@@ -311,7 +353,6 @@ function main () {
             timeout: 50000,
             url: targetUrl,
             onload: function ( response ) {
-                console.log( response );
                 if ( response.status === 200 && response.finalUrl === targetUrl ) {
                     callback( true );
                 } else {
@@ -337,10 +378,8 @@ function main () {
 
     function checkDataLoaded () {
         if ( loaded ) {
-            console.log( 'Data is loaded, hiding toast...' );
             toast.style = toastElement( false );
         } else {
-            console.log( 'Data isn\'t loaded, showing toast...' );
             toast.style = toastElement( true );
         }
     }
@@ -349,20 +388,8 @@ function main () {
 // Run main function when url changes
 setInterval( () => {
     if ( window.location.href !== loadUrl ) {
-        main();
+        await main();
         loadUrl = window.location.href;
     }
 }, 1000 );
-window.addEventListener( 'hashchange', () => {
-    if ( window.location.href !== loadUrl ) {
-        main();
-        loadUrl = window.location.href;
-    }
-}, false );
-window.addEventListener( 'popstate', () => {
-    if ( window.location.href !== loadUrl ) {
-        main();
-        loadUrl = window.location.href;
-    }
-}, false );
-window.addEventListener( 'load', main, false );
+window.addEventListener( 'load', await main, false );
