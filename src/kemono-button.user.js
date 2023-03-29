@@ -45,9 +45,9 @@ function styledLog ( message, isDebug = debugMode, isError = false ) {
     ];
 
     if ( isError ) {
-        console.log( '%cKemonoButton - Error Occured', kemonoBadgeError, `: ${ message }` );
+        console.log( '%cKemonoButton - Error Occured', kemonoBadgeError.join(';'), `: ${ message }` );
     } else {
-        console.log( `%cKemonoButton${ isDebug && ' - Debug Mode' }`, kemonoBadgeStyle, `: ${ message }` );
+        console.log( `%cKemonoButton${ isDebug ? ' - Debug Mode' : '' }`, kemonoBadgeStyle.join(';'), `: ${ message }` );
     }
 }
 
