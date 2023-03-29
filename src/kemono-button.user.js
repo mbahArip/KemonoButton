@@ -386,7 +386,7 @@ async function main () {
 };
 
 // Run main function when url changes
-setInterval( () => {
+setInterval( async () => {
     if ( window.location.href !== loadUrl ) {
         await main();
         loadUrl = window.location.href;
