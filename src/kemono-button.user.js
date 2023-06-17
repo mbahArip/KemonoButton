@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Kemono Button
 // @namespace       https://github.com/mbaharip
-// @version         1.0.6
+// @version         1.0.7
 // @author          mbaharip
 // @description     Adds button to access artist's Kemono page
 // @icon            https://kemono.party/static/favicon.ico
@@ -11,7 +11,7 @@
 // @match           https://fantia.jp/*
 // @match           https://*.fanbox.cc/
 // @match           https://www.fanbox.cc/@*
-// @match           https://www.patreon.com/user/*
+// @match           https://www.patreon.com/*
 // @match           https://onlyfans.com/*
 // @connect         self
 // @connect         kemono.party
@@ -235,7 +235,78 @@ async function main () {
                 } );
             } );
         }
-        if ( domain === 'patreon' ) { }
+        // Fast script, need more testing.
+        if ( domain.includes( 'patreon' ) ) {
+            loaded = false;
+            checkDataLoaded();
+            // console.log( 'Kemono Button: Fanbox detected' );
+            styledLog( 'Patreon detected.' )
+
+            const nameHeader = 'h1#pageheader-title';
+
+            await awaitForElement( nameHeader, ( name ) => {
+                const creatorName = name.innerText;
+                let creatorId;
+
+                const headElement = document.getElementsByTagName('head')[0].children;
+                const headKeys = Object.keys(headElement);
+
+                for(const key of headKeys){
+                    const headItem = headElement[key].innerText;
+                    if(headItem.includes('window.patreon')){
+                        creatorId = headItem.split(`"creator":`)[1].split(`"type": "user"`)[0].split(`\"id\": \"`)[1].split(`\",\n`)[0];
+                    }
+                }
+
+                const kemonoURL = `https://kemono.party/patreon/user/${ creatorId }`;
+                console.log(kemonoURL);
+
+                const containerClass = name.parentElement.className;
+                const nameContainer = name.parentElement.parentElement;
+                const anchorClass = document.querySelector('a[aria-disabled="false"]').className;
+                const anchorTextContainerClass = document.querySelector('a[aria-disabled="false"]').children[0].className;
+                const anchorTextClass = document.querySelector('a[aria-disabled="false"]').children[0].children[0].className
+
+                const container = document.createElement('div');
+                const anchorText = document.createElement('div');
+                const anchorTextContainer = document.createElement('div');
+                const anchor = document.createElement('a');
+
+                container.className = containerClass;
+
+                anchorText.innerText = 'Kemono';
+                anchorText.className = anchorTextClass;
+
+                anchorTextContainer.className = anchorTextContainerClass;
+
+                anchor.href = kemonoURL;
+                anchor.setAttribute('aria-disabled', false);
+                anchor.className = anchorClass;
+                anchor.id = "kemonoButton"
+                anchor.style = 'width:fit-content; margin:8px 0px;'
+
+                const img = document.createElement( 'img' );
+                img.src = 'https://kemono.party/static/klogo.png';
+                img.style = 'width: 1rem; height: 1rem; margin: 0 0.5rem;';
+
+                checkKemonoPage( kemonoURL, (exists) => {
+                    if(exists) {
+                        anchor.setAttribute('aria-disabled', false);
+                        anchor.href = kemonoURL;
+                    } else {
+                        anchor.setAttribute('aria-disabled', true);
+                        anchor.href = '#';
+                        anchor.style = 'width:fit-content; margin:8px 0px; cursor:default; pointer-events:none;'
+                    }
+
+                    anchorTextContainer.appendChild(anchorText);
+                    anchor.appendChild(img)
+                    anchor.appendChild(anchorTextContainer);
+                    container.appendChild(anchor);
+                    nameContainer.appendChild(container);
+                })
+            });
+        }
 
         // Coomer button
         if ( domain.includes( 'onlyfans' ) ) {
