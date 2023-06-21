@@ -297,6 +297,7 @@ async function main () {
                         anchor.setAttribute('aria-disabled', true);
                         anchor.href = '#';
                         anchor.style = 'width:fit-content; margin:8px 0px; cursor:default; pointer-events:none;'
+                        anchorText.innerText = "Not found"
                     }
 
                     anchorTextContainer.appendChild(anchorText);
