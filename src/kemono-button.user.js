@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Kemono Button
 // @namespace       https://github.com/mbaharip
-// @version         1.0.7
+// @version         1.1.0
 // @author          mbaharip
 // @description     Adds button to access artist's Kemono page
 // @icon            https://kemono.su/static/favicon.ico
