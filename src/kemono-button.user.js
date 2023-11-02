@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Kemono Button
 // @namespace       https://github.com/mbaharip
-// @version         1.1.0
+// @version         1.1.1
 // @author          mbaharip
 // @description     Adds button to access artist's Kemono page
 // @icon            https://kemono.su/static/favicon.ico
@@ -51,16 +51,15 @@ function styledLog ( message, isDebug = debugMode, isError = false ) {
     }
 }
 
-const domain = {
-    coomer: 'https://coomer.su',
-    kemono: 'https://kemono.su'
-}
-
 async function main () {
     'use strict';
 
     loadUrl = window.location.href;
     const domain = window.location.hostname;
+    const partyDomain = {
+        coomer: 'https://coomer.su',
+        kemono: 'https://kemono.su'
+    }
     const pathname = window.location.toString();
     var attempt = 0;
     var loaded = true;
@@ -121,7 +120,7 @@ async function main () {
             await awaitForElement( '.fanclub-show-header', () => {
                 const fcName = document.querySelector( '.fanclub-name' ).children[ 0 ].getAttribute( 'href' );
                 const userId = fcName.split( 'fanclubs/' )[ 1 ].split( '/' )[ 0 ];
-                const kemonoURL = `${domain.kemono}/fantia/user/${ userId }`;
+                const kemonoURL = `${partyDomain.kemono}/fantia/user/${ userId }`;
 
                 const buttonContainer = document.querySelector( '.fanclub-btns' );
 
@@ -141,7 +140,7 @@ async function main () {
                 // Kemono img
                 const img = document.createElement( 'img' );
                 img.className = 'mr-5'
-                img.src = `${domain.kemono}/static/klogo.png`;
+                img.src = `${partyDomain.kemono}/static/klogo.png`;
                 img.style = 'width: 1.5rem; height: 1.5rem; filter: invert(100%)';
 
                 // Text
@@ -181,7 +180,7 @@ async function main () {
             await awaitForElement( tempSelector.avatar, ( avatar ) => {
                 const avatarURL = window.getComputedStyle( avatar ).getPropertyValue( 'background-image' );
                 const userId = avatarURL.split( 'user/' )[ 1 ].split( '/' )[ 0 ];
-                const kemonoURL = `${domain.kemono}/fanbox/user/${ userId }`;
+                const kemonoURL = `${partyDomain.kemono}/fanbox/user/${ userId }`;
 
                 const buttonContainer = document.querySelector( tempSelector.container );
 
@@ -204,7 +203,7 @@ async function main () {
 
                 // Kemono img
                 const img = document.createElement( 'img' );
-                img.src = `${domain.kemono}/static/klogo.png`;
+                img.src = `${partyDomain.kemono}/static/klogo.png`;
                 img.className = 'FollowButton__Icon-sc-q84so8-0 beOViB';
                 img.style = 'width: 1rem; height: 1rem; margin: 0 0.5rem;';
 
@@ -255,7 +254,7 @@ async function main () {
                     }
                 }
 
-                const kemonoURL = `${domain.kemono}/patreon/user/${ creatorId }`;
+                const kemonoURL = `${partyDomain.kemono}/patreon/user/${ creatorId }`;
                 console.log(kemonoURL);
 
                 const containerClass = name.parentElement.className;
@@ -283,7 +282,7 @@ async function main () {
                 anchor.style = 'width:fit-content; margin:8px 0px;'
 
                 const img = document.createElement( 'img' );
-                img.src = `${domain.kemono}/static/klogo.png`;
+                img.src = `${partyDomain.kemono}/static/klogo.png`;
                 img.style = 'width: 1rem; height: 1rem; margin: 0 0.5rem;';
 
                 checkKemonoPage( kemonoURL, (exists) => {
@@ -341,7 +340,7 @@ async function main () {
                 const usernames = document.querySelectorAll( '.g-user-username' )
                 const username = usernames[usernames.length - 1].innerText.split( '@' )[ 1 ];
                 if(!username) throw new Error('Can\'t find username. Please report in the thread / github.')
-                const coomerURL = `${domain.coomer}/onlyfans/user/${ username }`;
+                const coomerURL = `${partyDomain.coomer}/onlyfans/user/${ username }`;
 
                 const buttonContainer = document.querySelector( 'div.b-group-profile-btns:nth-child(2)' );
 
@@ -358,7 +357,7 @@ async function main () {
 
                 // Coomer img
                 const img = document.createElement( 'img' );
-                img.src = `${domain.kemono}/static/kemono-logo.svg`;
+                img.src = `${partyDomain.kemono}/static/kemono-logo.svg`;
                 img.style = 'width: 2.5rem; height: 2.5rem; filter: hue-rotate(190deg) brightness(1.4)';
 
                 checkKemonoPage( coomerURL, ( exists ) => {
@@ -371,7 +370,7 @@ async function main () {
                         anchor.onclick = ( e ) => {
                             e.preventDefault();
                         };
-                        img.src = `${domain.kemono}/static/klogo.png`;
+                        img.src = `${partyDomain.kemono}/static/klogo.png`;
                         img.style = `width: 2.5rem; height: 2.5rem; ${ isDarkMode ? '' : 'filter: invert(1)' }`;
                     }
                     toastText( 'Adding button...' );
