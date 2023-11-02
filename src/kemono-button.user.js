@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Kemono Button
 // @namespace       https://github.com/mbaharip
-// @version         1.1.2
+// @version         1.1.2-hotfix#1
 // @author          mbaharip
 // @description     Adds button to access artist's Kemono page
 // @icon            https://kemono.su/static/favicon.ico
@@ -449,12 +449,13 @@ async function main () {
                             checkKemonoPage( coomerURL, ( exists ) => {
                                 if ( !exists ){
                                     btn.disabled = true;
-                                    anchor.style = 'cursor: not-allowed;';
+                                    btn.style.opacity = 0.5
+                                    anchor.style.cursor = 'not-allowed';
                                     anchor.onclick = ( e ) => {
                                         e.preventDefault();
                                     };
                                     img.src = `${partyDomain.kemono}/static/klogo.png`;
-                                    img.style = `width: 2.5rem; height: 2.5rem; ${ isDarkMode ? '' : 'filter: invert(1)' }`;
+                                    img.style = `width: 1em; height: 1em;`;
                                 }
                                 toastText( 'Adding button...' );
 
