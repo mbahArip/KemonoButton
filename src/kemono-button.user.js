@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Kemono Button
 // @namespace       https://github.com/mbaharip
-// @version         1.1.1
+// @version         1.1.2
 // @author          mbaharip
 // @description     Adds button to access artist's Kemono page
 // @icon            https://kemono.su/static/favicon.ico
@@ -13,6 +13,7 @@
 // @match           https://www.fanbox.cc/@*
 // @match           https://www.patreon.com/*
 // @match           https://onlyfans.com/*
+// @match           https://fansly.com/*
 // @connect         self
 // @connect         kemono.su
 // @connect         coomer.su
@@ -382,6 +383,104 @@ async function main () {
                     buttonArray.forEach( ( button ) => buttonContainer.appendChild( button ) );
                 } );
             } );
+        }
+
+        // Fansly
+        if( domain.includes( 'fansly' ) ) {
+            loaded = false;
+            checkDataLoaded();
+            styledLog('Fansly detected.')
+
+            await awaitForElement( 'div.profile-details', () => {
+                const username = window.location.href.split('fansly.com/')[1].split('/')[0];
+                if(!username) throw new Error('Can\'t find username. Please report in the thread / github.')
+                const apiEndpoint = `https://apiv3.fansly.com/api/v1/account?usernames=${username}&ngsw-bypass=true`
+                const xhrOptions = {
+                    method: 'GET',
+                    synchronous: false,
+                    timeout: 50000,
+                    url: apiEndpoint,
+                    onload: function ( response ) {
+                        if ( response.status === 200 && response.finalUrl === apiEndpoint ) {
+                            const id = JSON.parse(response.responseText)['response'][0].id;
+                            const coomerURL = `${partyDomain.coomer}/fansly/user/${ id }`;
+
+                            const baseContainer = document.querySelector('div.profile-details');
+                            const ngContentAttrName = Object.values(baseContainer.attributes).filter(key => key.name.startsWith('_ngcontent'))[0].name;
+                            if(!ngContentAttrName) throw new Error('Can\'t find attribute name. Please report in the thread / github.');
+                            const container = document.createElement('div');
+                            container.className = 'follow-profile kemono-button';
+                            container.setAttribute(ngContentAttrName, "");
+
+                            const btn = document.createElement('btn');
+
+                            const anchor = document.createElement('a')
+                            anchor.href = coomerURL;
+                            anchor.target = '_blank';
+                            anchor.style.textDecoration = 'unset';
+                            anchor.style.margin = '3.5em 0.25em 0 0.25em';
+                            anchor.style.backgroundColor = 'transparent';
+                            anchor.style.color = '#fff';
+                            anchor.style.border = '1px solid var(--blue-1)';
+                            anchor.style.borderRadius = '0.9em';
+                            anchor.style.fontSize = '1.125em';
+                            // anchor.style.fontWeight = '500';
+                            anchor.style.display = 'flex';
+                            anchor.style.justifyContent= 'center';
+                            anchor.style.flexDirection = 'row';
+                            anchor.style.gap = '2px';
+                            anchor.style.width = '5em';
+                            anchor.style.height = '1.8em';
+                            anchor.style.alignItems = 'center';
+                            anchor.style.cursor = 'pointer';
+
+                            const span = document.createElement('span');
+                            span.innerText = 'Coomer';
+                            span.style.fontSize='0.8em';
+                            span.style.fontWeight='500';
+
+
+                            // Coomer img
+                            const img = document.createElement( 'img' );
+                            img.src = `${partyDomain.kemono}/static/kemono-logo.svg`;
+                            img.style = 'width: 1em; height: 1em; filter: hue-rotate(190deg) brightness(1.4)';
+
+
+                            checkKemonoPage( coomerURL, ( exists ) => {
+                                if ( !exists ){
+                                    btn.disabled = true;
+                                    anchor.style = 'cursor: not-allowed;';
+                                    anchor.onclick = ( e ) => {
+                                        e.preventDefault();
+                                    };
+                                    img.src = `${partyDomain.kemono}/static/klogo.png`;
+                                    img.style = `width: 2.5rem; height: 2.5rem; ${ isDarkMode ? '' : 'filter: invert(1)' }`;
+                                }
+                                toastText( 'Adding button...' );
+
+                                anchor.append(img);
+                                anchor.append(span);
+                                btn.append(anchor)
+                                container.append(btn)
+                                baseContainer.append(container)
+                            } );
+                        } else {
+                            styledLog('Failed to fetch data', debugMode, true)
+                        }
+                    },
+                    onerror: function () {
+                        alert( 'Request failed. Please try again later.' );
+                        checkDataLoaded();
+                        toastText( 'Error.' );
+                    },
+                    ontimeout: function () {
+                        alert( 'Request timed out. Please try again later.' );
+                        checkDataLoaded();
+                        toastText( 'Error.' );
+                    }
+                };
+                GM.xmlHttpRequest( xhrOptions );
+            })
         }
     } catch ( error ) {
         toastText( 'Error adding button. Please report this to the developer.' );
