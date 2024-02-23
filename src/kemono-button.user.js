@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name            Kemono Button
 // @namespace       https://github.com/mbaharip
-// @version         1.1.2-hotfix#1
+// @version         1.1.3
 // @author          mbaharip
 // @description     Adds button to access artist's Kemono page
 // @icon            https://kemono.su/static/favicon.ico
@@ -239,69 +239,48 @@ async function main () {
             // console.log( 'Kemono Button: Fanbox detected' );
             styledLog( 'Patreon detected.' )
 
-            const nameHeader = 'h1#pageheader-title';
+            const nameHeader = 'script#__NEXT_DATA__';
 
-            await awaitForElement( nameHeader, ( name ) => {
-                const creatorName = name.innerText;
-                let creatorId;
-
-                const headElement = document.getElementsByTagName('head')[0].children;
-                const headKeys = Object.keys(headElement);
-
-                for(const key of headKeys){
-                    const headItem = headElement[key].innerText;
-                    if(headItem.includes('window.patreon')){
-                        creatorId = headItem.split(`"creator":`)[1].split(`"type": "user"`)[0].split(`\"id\": \"`)[1].split(`\",\n`)[0];
-                    }
-                }
+            await awaitForElement( nameHeader, ( props ) => {
+                const json = JSON.parse(props.innerText);
+                const creatorId = json.props.pageProps.bootstrapEnvelope.bootstrap.campaign.data.relationships.creator.data.id; // Might changed
 
                 const kemonoURL = `${partyDomain.kemono}/patreon/user/${ creatorId }`;
                 console.log(kemonoURL);
 
-                const containerClass = name.parentElement.className;
-                const nameContainer = name.parentElement.parentElement;
-                const anchorClass = document.querySelector('a[aria-disabled="false"]').className;
-                const anchorTextContainerClass = document.querySelector('a[aria-disabled="false"]').children[0].className;
-                const anchorTextClass = document.querySelector('a[aria-disabled="false"]').children[0].children[0].className
+                const container = document.querySelector('main[role="main"] div:has(div[data-tag="creator-public-page-avatar"]) > div:has(> h1[align=center]) > div:has(button[data-tag])')
+                const button = document.querySelector('main[role="main"] div:has(div[data-tag="creator-public-page-avatar"]) > div:has(> h1[align=center]) > div:has(button[data-tag]) > button');
 
-                const container = document.createElement('div');
-                const anchorText = document.createElement('div');
-                const anchorTextContainer = document.createElement('div');
                 const anchor = document.createElement('a');
-
-                container.className = containerClass;
-
-                anchorText.innerText = 'Kemono';
-                anchorText.className = anchorTextClass;
-
-                anchorTextContainer.className = anchorTextContainerClass;
+                const newBtn = document.createElement('button');
+                newBtn.setAttribute('aria-disabled', false);
+                newBtn.setAttribute('type', 'button');
+                newBtn.setAttribute('class', button.className);
 
                 anchor.href = kemonoURL;
                 anchor.setAttribute('aria-disabled', false);
-                anchor.className = anchorClass;
-                anchor.id = "kemonoButton"
-                anchor.style = 'width:fit-content; margin:8px 0px;'
-
+                anchor.id='kemonoButton';
+                
                 const img = document.createElement( 'img' );
                 img.src = `${partyDomain.kemono}/static/klogo.png`;
                 img.style = 'width: 1rem; height: 1rem; margin: 0 0.5rem;';
 
                 checkKemonoPage( kemonoURL, (exists) => {
+                    newBtn.appendChild(img);
                     if(exists) {
                         anchor.setAttribute('aria-disabled', false);
+                        anchor.setAttribute('target', '_blank');
                         anchor.href = kemonoURL;
+                        newBtn.innerText = "Kemono";
                     } else {
                         anchor.setAttribute('aria-disabled', true);
                         anchor.href = '#';
                         anchor.style = 'width:fit-content; margin:8px 0px; cursor:default; pointer-events:none;'
-                        anchorText.innerText = "Not found"
+                        newBtn.setAttribute('aria-disabled', true);
+                        newBtn.innerText = "Not on Kemono";
                     }
-
-                    anchorTextContainer.appendChild(anchorText);
-                    anchor.appendChild(img)
-                    anchor.appendChild(anchorTextContainer);
+                        anchor.appendChild(newBtn);
                     container.appendChild(anchor);
-                    nameContainer.appendChild(container);
                 })
             });
         }
