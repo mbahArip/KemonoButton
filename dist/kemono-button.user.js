@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kemono Button
 // @namespace    https://github.com/mbaharip
-// @version      2.0.1
+// @version      2.0.2
 // @author       mbaharip
 // @description  Add button to access artist's page on Kemono or Coomer
 // @license      GPL-3.0-or-later
@@ -2705,7 +2705,7 @@ Please report this issue to the developer at https://github.com/mbahArip/KemonoB
         fanbox: true,
         fansly: false,
         gumroad: false,
-        onlyfans: false,
+        onlyfans: true,
         patreon: false,
         subscribestar: false
       }),
@@ -2720,6 +2720,7 @@ Please report this issue to the developer at https://github.com/mbahArip/KemonoB
     const toastId = y.useRef("");
     const interval = y.useRef(0);
     const timeout = y.useRef(0);
+    const attempt = y.useRef(0);
     y.useEffect(() => {
       if (!window) {
         logger.error("Window object not found, are you running in a browser?");
@@ -2751,27 +2752,74 @@ Please report this issue to the developer at https://github.com/mbahArip/KemonoB
         (async () => {
           let result = null;
           if (origin.includes("onlyfans")) {
-            result = await onlyfans(toastId.current);
-            setIsCreatorPage(true);
+            let ele = document.querySelector("div.l-profile-page");
+            while (!ele && attempt.current <= 10) {
+              setStatus("loading");
+              setIsCreatorPage(false);
+              ele = document.querySelector("div.l-profile-page");
+              attempt.current++;
+              _t.loading(`Waiting for profile page...`, {
+                id: toastId.current
+              });
+              await new Promise((res) => setTimeout(res, 500));
+            }
+            if (ele) {
+              result = await onlyfans(toastId.current);
+              setIsCreatorPage(true);
+              attempt.current = 0;
+            } else {
+              result = null;
+              setIsCreatorPage(false);
+              attempt.current = 0;
+            }
           }
           if (origin.includes("fansly")) {
             result = await fansly(toastId.current);
             setIsCreatorPage(true);
           }
           if (origin.includes("fantia")) {
-            const pathname2 = window.location.pathname;
-            if ((pathname2.includes("fanclubs") || pathname2.includes("posts") || pathname2.includes("products")) && /\d/.test(pathname2) || document.querySelector(".fanclub-show-header")) {
+            let ele = document.querySelector(".fanclub-show-header");
+            while (!ele && attempt.current <= 10) {
+              setStatus("loading");
+              setIsCreatorPage(false);
+              ele = document.querySelector(".fanclub-show-header");
+              attempt.current++;
+              _t.loading(`Waiting for profile page...`, {
+                id: toastId.current
+              });
+              await new Promise((res) => setTimeout(res, 500));
+            }
+            if (ele) {
               result = await fantia(toastId.current);
               setIsCreatorPage(true);
+              attempt.current = 0;
             } else {
               result = null;
               setIsCreatorPage(false);
-              _t.dismiss(toastId.current);
+              attempt.current = 0;
             }
           }
           if (origin.includes("fanbox")) {
-            result = await fanbox(toastId.current);
-            setIsCreatorPage(true);
+            let ele = document.querySelector("div[class*='CreatorPage']");
+            while (!ele && attempt.current <= 10) {
+              setStatus("loading");
+              setIsCreatorPage(false);
+              ele = document.querySelector("div[class*='CreatorPage']");
+              attempt.current++;
+              _t.loading(`Waiting for profile page...`, {
+                id: toastId.current
+              });
+              await new Promise((res) => setTimeout(res, 500));
+            }
+            if (ele) {
+              result = await fanbox(toastId.current);
+              setIsCreatorPage(true);
+              attempt.current = 0;
+            } else {
+              result = null;
+              setIsCreatorPage(false);
+              attempt.current = 0;
+            }
           }
           if (origin.includes("patreon")) {
             result = await patreon(toastId.current);
