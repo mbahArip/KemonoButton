@@ -28,7 +28,7 @@ export default async function awaitForElement(
         rej(null);
       }
       attempt++;
-      toast.loading(`Waiting for element to appear... (Attempt #${attempt})`, {
+      toast.loading(`Waiting for element to appear...`, {
         id: toastId,
       });
       setTimeout(() => {

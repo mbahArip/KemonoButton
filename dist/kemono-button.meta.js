@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kemono Button
 // @namespace    https://github.com/mbaharip
-// @version      2.0.1
+// @version      2.0.2
 // @author       mbaharip
 // @description  Add button to access artist's page on Kemono or Coomer
 // @license      GPL-3.0-or-later

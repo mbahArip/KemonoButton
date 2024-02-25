@@ -19,7 +19,7 @@ export default function App() {
       fanbox: true,
       fansly: false,
       gumroad: false,
-      onlyfans: false,
+      onlyfans: true,
       patreon: false,
       subscribestar: false,
     }),
@@ -34,6 +34,7 @@ export default function App() {
   const toastId = useRef<string>("");
   const interval = useRef<number>(0);
   const timeout = useRef<number>(0);
+  const attempt = useRef<number>(0);
 
   useEffect(() => {
     if (!window) {
@@ -69,8 +70,26 @@ export default function App() {
 
         // COOMER
         if (origin.includes("onlyfans")) {
-          result = await onlyfans(toastId.current);
-          setIsCreatorPage(true);
+          let ele = document.querySelector("div.l-profile-page");
+          while (!ele && attempt.current <= 10) {
+            setStatus("loading");
+            setIsCreatorPage(false);
+            ele = document.querySelector("div.l-profile-page");
+            attempt.current++;
+            toast.loading(`Waiting for profile page...`, {
+              id: toastId.current,
+            });
+            await new Promise((res) => setTimeout(res, 500)); // Wait for 500ms
+          }
+          if (ele) {
+            result = await onlyfans(toastId.current);
+            setIsCreatorPage(true);
+            attempt.current = 0;
+          } else {
+            result = null;
+            setIsCreatorPage(false);
+            attempt.current = 0;
+          }
         }
         if (origin.includes("fansly")) {
           result = await fansly(toastId.current);
@@ -79,25 +98,50 @@ export default function App() {
 
         // KEMONO
         if (origin.includes("fantia")) {
-          const pathname = window.location.pathname;
-          if (
-            ((pathname.includes("fanclubs") ||
-              pathname.includes("posts") ||
-              pathname.includes("products")) &&
-              /\d/.test(pathname)) ||
-            document.querySelector(".fanclub-show-header")
-          ) {
+          let ele = document.querySelector(".fanclub-show-header");
+          while (!ele && attempt.current <= 10) {
+            setStatus("loading");
+            setIsCreatorPage(false);
+            ele = document.querySelector(".fanclub-show-header");
+            attempt.current++;
+            toast.loading(`Waiting for profile page...`, {
+              id: toastId.current,
+            });
+            await new Promise((res) => setTimeout(res, 500)); // Wait for 500ms
+          }
+          if (ele) {
             result = await fantia(toastId.current);
             setIsCreatorPage(true);
+            attempt.current = 0;
           } else {
             result = null;
             setIsCreatorPage(false);
-            toast.dismiss(toastId.current);
+            attempt.current = 0;
           }
         }
         if (origin.includes("fanbox")) {
-          result = await fanbox(toastId.current);
-          setIsCreatorPage(true);
+          let ele = document.querySelector("div[class*='CreatorPage']");
+          while (!ele && attempt.current <= 10) {
+            setStatus("loading");
+            setIsCreatorPage(false);
+            ele = document.querySelector("div[class*='CreatorPage']");
+            attempt.current++;
+            toast.loading(`Waiting for profile page...`, {
+              id: toastId.current,
+            });
+            await new Promise((res) => setTimeout(res, 500)); // Wait for 500ms
+          }
+          if (ele) {
+            result = await fanbox(toastId.current);
+            setIsCreatorPage(true);
+            attempt.current = 0;
+          } else {
+            result = null;
+            setIsCreatorPage(false);
+            attempt.current = 0;
+          }
+          // result = await fanbox(toastId.current);
+          // setIsCreatorPage(true);
         }
         if (origin.includes("patreon")) {
           result = await patreon(toastId.current);
