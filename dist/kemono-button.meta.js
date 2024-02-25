@@ -7,8 +7,8 @@
 // @license      GPL-3.0-or-later
 // @icon         https://kemono.su/static/favicon.ico
 // @supportURL   https://github.com/mbaharip/KemonoButton/issues
-// @downloadURL  https://raw.githubusercontent.com/mbaharip/KemonoButton/main/src/kemono-button.user.js
-// @updateURL    https://raw.githubusercontent.com/mbaharip/KemonoButton/main/src/kemono-button.user.js
+// @downloadURL  https://raw.githubusercontent.com/mbaharip/KemonoButton/main/dist/kemono-button.user.js
+// @updateURL    https://raw.githubusercontent.com/mbaharip/KemonoButton/main/dist/kemono-button.user.js
 // @match        https://onlyfans.com/*
 // @match        https://fansly.com/*
 // @match        https://fantia.jp/*

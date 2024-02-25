@@ -16,9 +16,9 @@ export default defineConfig({
         description: "Add button to access artist's page on Kemono or Coomer",
         icon: "https://kemono.su/static/favicon.ico",
         downloadURL:
-          "https://raw.githubusercontent.com/mbaharip/KemonoButton/main/src/kemono-button.user.js",
+          "https://raw.githubusercontent.com/mbaharip/KemonoButton/main/dist/kemono-button.user.js",
         updateURL:
-          "https://raw.githubusercontent.com/mbaharip/KemonoButton/main/src/kemono-button.user.js",
+          "https://raw.githubusercontent.com/mbaharip/KemonoButton/main/dist/kemono-button.user.js",
         supportURL: "https://github.com/mbaharip/KemonoButton/issues",
         "run-at": "document-start",
         license: "GPL-3.0-or-later",

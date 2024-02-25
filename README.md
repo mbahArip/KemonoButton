@@ -17,7 +17,7 @@ The sole reason is because I'm tired of opening new tab and search for the artis
 
 ## How to install?
 
-You can simply install it by clicking [this link](https://raw.githubusercontent.com/mbaharip/KemonoButton/main/src/kemono-button.user.js)  
+You can simply install it by clicking [this link](https://raw.githubusercontent.com/mbaharip/KemonoButton/main/dist/kemono-button.user.js)  
 Or if you paranoid about the content, you can check the source code [here](https://github.com/mbahArip/KemonoButton/tree/main/src)
 
 If you don't like the new looks, you can check the old version by clicking [this link](https://github.com/mbahArip/KemonoButton/blob/v1.x/README.md)
