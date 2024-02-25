@@ -18,7 +18,7 @@ export default defineConfig({
         downloadURL:
           "https://raw.githubusercontent.com/mbaharip/KemonoButton/main/dist/kemono-button.user.js",
         updateURL:
-          "https://raw.githubusercontent.com/mbaharip/KemonoButton/main/dist/kemono-button.user.js",
+          "https://raw.githubusercontent.com/mbaharip/KemonoButton/main/dist/kemono-button.meta.js",
         supportURL: "https://github.com/mbaharip/KemonoButton/issues",
         license: "GPL-3.0-or-later",
         match: [
