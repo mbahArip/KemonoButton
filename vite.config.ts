@@ -20,7 +20,6 @@ export default defineConfig({
         updateURL:
           "https://raw.githubusercontent.com/mbaharip/KemonoButton/main/dist/kemono-button.user.js",
         supportURL: "https://github.com/mbaharip/KemonoButton/issues",
-        "run-at": "document-start",
         license: "GPL-3.0-or-later",
         match: [
           "https://onlyfans.com/*",
