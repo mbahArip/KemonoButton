@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         Kemono Button
 // @namespace    https://github.com/mbaharip
-// @version      2.0.0
+// @version      2.0.1
 // @author       mbaharip
 // @description  Add button to access artist's page on Kemono or Coomer
 // @license      GPL-3.0-or-later
 // @icon         https://kemono.su/static/favicon.ico
 // @supportURL   https://github.com/mbaharip/KemonoButton/issues
 // @downloadURL  https://raw.githubusercontent.com/mbaharip/KemonoButton/main/dist/kemono-button.user.js
-// @updateURL    https://raw.githubusercontent.com/mbaharip/KemonoButton/main/dist/kemono-button.user.js
+// @updateURL    https://raw.githubusercontent.com/mbaharip/KemonoButton/main/dist/kemono-button.meta.js
 // @match        https://onlyfans.com/*
 // @match        https://fansly.com/*
 // @match        https://fantia.jp/*
