@@ -71,7 +71,7 @@ export default function App() {
         // COOMER
         if (origin.includes("onlyfans")) {
           let ele = document.querySelector("div.l-profile-page");
-          while (!ele && attempt.current <= 10) {
+          while (!ele) {
             setStatus("loading");
             setIsCreatorPage(false);
             ele = document.querySelector("div.l-profile-page");
@@ -184,7 +184,7 @@ export default function App() {
       >
         <div
           id="result"
-          className="fixed bottom-12 left-2 w-fit h-fit text-sm py-2 px-4 bg-zinc-900 drop-shadow-md backdrop-blur-lg border border-zinc-800 text-zinc-400 rounded-lg"
+          className="fixed bottom-12 left-2 w-fit h-fit text-sm py-2 px-4 bg-zinc-900 drop-shadow-md border border-zinc-800 text-zinc-400 rounded-lg"
         >
           {found && isCreatorPage ? (
             <div className="flex flex-col gap-3">

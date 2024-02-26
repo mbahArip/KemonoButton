@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kemono Button
 // @namespace    https://github.com/mbaharip
-// @version      2.0.2
+// @version      2.0.2/hotfix-firefox
 // @author       mbaharip
 // @description  Add button to access artist's page on Kemono or Coomer
 // @license      GPL-3.0-or-later
@@ -2753,7 +2753,7 @@ Please report this issue to the developer at https://github.com/mbahArip/KemonoB
           let result = null;
           if (origin.includes("onlyfans")) {
             let ele = document.querySelector("div.l-profile-page");
-            while (!ele && attempt.current <= 10) {
+            while (!ele) {
               setStatus("loading");
               setIsCreatorPage(false);
               ele = document.querySelector("div.l-profile-page");
@@ -2855,7 +2855,7 @@ Please report this issue to the developer at https://github.com/mbahArip/KemonoB
             "div",
             {
               id: "result",
-              className: "fixed bottom-12 left-2 w-fit h-fit text-sm py-2 px-4 bg-zinc-900 drop-shadow-md backdrop-blur-lg border border-zinc-800 text-zinc-400 rounded-lg",
+              className: "fixed bottom-12 left-2 w-fit h-fit text-sm py-2 px-4 bg-zinc-900 drop-shadow-md border border-zinc-800 text-zinc-400 rounded-lg",
               children: [
                 found && isCreatorPage ? /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex flex-col gap-3", children: [
                   /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "flex items-center gap-3", children: [
