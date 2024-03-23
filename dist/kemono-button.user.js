@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Kemono Button
 // @namespace    https://github.com/mbaharip
-// @version      2.0.2/hotfix-firefox
+// @version      2.0.3/fanbox-fix
 // @author       mbaharip
 // @description  Add button to access artist's page on Kemono or Coomer
 // @license      GPL-3.0-or-later
@@ -2503,12 +2503,16 @@ to {
   axios.HttpStatusCode = HttpStatusCode$1;
   axios.default = axios;
   async function checkUser(provider, user) {
-    const check = await axios.get(
-      `https://kemono-api.mbaharip.com/check/${provider}/${user}`
-    );
-    if (check.status !== 200)
-      return null;
-    return check.data.data;
+    const check = await axios.get(`https://kemono-api.mbaharip.com/check/${provider}/${user}`, {
+      validateStatus(status) {
+        if (status > 500)
+          return false;
+        return true;
+      }
+    }).then((res) => {
+      return res.status === 200 ? res.data.data : null;
+    }).catch(() => null);
+    return check;
   }
   class FancyLogger {
     constructor() {
@@ -2568,11 +2572,18 @@ Please report this issue to the developer at https://github.com/mbahArip/KemonoB
         throw new Error(
           "Failed to get username from fanbox, please report this issue to the developer."
         );
-      const getFromApi = await checkUser("fanbox", username);
-      if (!getFromApi)
+      let data = null;
+      data = await checkUser("fanbox", username);
+      const title = document.querySelector("title");
+      if (title && !data) {
+        username = title.innerText.split("｜pixiv")[0];
+        logger.debug(`Username from title: ${username}`);
+        data = await checkUser("fanbox", username);
+      }
+      if (!data)
         throw new Error("Can't find user on kemono");
-      _t.success(`User found, ${getFromApi.name}`, { id: toastId });
-      return getFromApi;
+      _t.success(`User found, ${data.name}`, { id: toastId });
+      return data;
     } catch (error) {
       const e2 = error;
       logger.error(e2.message);

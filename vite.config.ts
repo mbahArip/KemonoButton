@@ -11,7 +11,7 @@ export default defineConfig({
       userscript: {
         name: "Kemono Button",
         namespace: "https://github.com/mbaharip",
-        version: "2.0.2/hotfix-firefox",
+        version: "2.0.3/fanbox-fix",
         author: "mbaharip",
         description: "Add button to access artist's page on Kemono or Coomer",
         icon: "https://kemono.su/static/favicon.ico",
