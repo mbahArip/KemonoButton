@@ -11,6 +11,8 @@ export default async function fanbox(
       throw new Error("Window object not found, are you running in a browser?");
 
     let username = null;
+
+    // Check url username first
     const url = window.location.href;
     const subdomainRegex = /https:\/\/(.*)\.fanbox.cc/;
     const pathnamesRegex = /https:\/\/www\.fanbox.cc\/@(.*)/;
@@ -23,15 +25,24 @@ export default async function fanbox(
       const pathname = pathnamesMatch[1].split("/")[0];
       username = pathname;
     }
+
     if (!username)
       throw new Error(
         "Failed to get username from fanbox, please report this issue to the developer."
       );
 
-    const getFromApi = await checkUser("fanbox", username);
-    if (!getFromApi) throw new Error("Can't find user on kemono");
-    toast.success(`User found, ${getFromApi.name}`, { id: toastId });
-    return getFromApi;
+    let data: Kemono.Creator | null = null;
+    data = await checkUser("fanbox", username);
+    const title = document.querySelector("title");
+    if (title && !data) {
+      username = title.innerText.split("｜pixiv")[0];
+      logger.debug(`Username from title: ${username}`);
+      data = await checkUser("fanbox", username);
+    }
+
+    if (!data) throw new Error("Can't find user on kemono");
+    toast.success(`User found, ${data.name}`, { id: toastId });
+    return data;
   } catch (error) {
     const e = error as Error;
     logger.error(e.message);
